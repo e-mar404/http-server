@@ -1,35 +1,29 @@
-package main
+package api
 
 import (
-	"e-mar404/http-server/internal/database"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
-	"sync/atomic"
 )
 
-type apiConfig struct {
-	fileserverHits atomic.Int32
-	dbQueries *database.Queries
-}
-
-func (cfg *apiConfig) middlewareMetricsInc(next http.Handler) http.Handler {
+func (cfg *Config) MiddlewareMetricsInc(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("[LOG] running metrics...\n")
-		cfg.fileserverHits.Add(1)
+		log.Printf("running metrics...\n")
+		cfg.FileserverHits.Add(1)
 		next.ServeHTTP(w, r)
 	})
 }
 
-func (cfg *apiConfig) midlewareMetricsReset(next http.Handler) http.Handler {
+func (cfg *Config) MidlewareMetricsReset(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("[LOG] reseting metrics...\n")
-		cfg.fileserverHits.Swap(0)
+		log.Printf("resseting metrics...\n")
+		cfg.FileserverHits.Swap(0)
 		next.ServeHTTP(w, r)
 	})
 }
 
-func metricsHandler(cfg *apiConfig) http.Handler {
+func MetricsHandler(cfg *Config) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r.Header.Add("Content-Type", "text/html; charset=utf-8")
 
@@ -47,17 +41,9 @@ func metricsHandler(cfg *apiConfig) http.Handler {
 			return
 		}
 
-		res := fmt.Sprintf(string(content), cfg.fileserverHits.Load())
+		res := fmt.Sprintf(string(content), cfg.FileserverHits.Load())
 
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(res))
-	})
-}
-
-func metricsResetHandler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.Header.Add("Content-Type", "text/plain; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
 	})
 }

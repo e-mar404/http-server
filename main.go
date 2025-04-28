@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"e-mar404/http-server/internal/api"
 	"e-mar404/http-server/internal/database"
 	"e-mar404/http-server/internal/handlers"
 	"log"
@@ -16,23 +17,26 @@ func main() {
 	log.Printf("Connecting to database\n")
 	godotenv.Load()
 	dbURL := os.Getenv("DB_URL")
+	platform := os.Getenv("PLATFORM")
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatalf("Error while connecting to database: %v\n", err)
 	}
 	dbQueries := database.New(db)
 
-	cfg := &apiConfig{
-		dbQueries: dbQueries,
+	cfg := &api.Config{
+		DB: dbQueries,
+		Platform: platform,
 	}
 	mux := http.NewServeMux()
 
-	mux.Handle("/app", cfg.middlewareMetricsInc(handlers.App()))
-	mux.Handle("GET /app/assets/", cfg.middlewareMetricsInc(handlers.Assets()))
+	mux.Handle("/app", cfg.MiddlewareMetricsInc(handlers.App()))
+	mux.Handle("GET /app/assets/", cfg.MiddlewareMetricsInc(handlers.Assets()))
 	mux.Handle("GET /api/healthz", handlers.Health())
 	mux.Handle("POST /api/validate_chirp", handlers.ValidateChirp())
-	mux.Handle("GET /admin/metrics", metricsHandler(cfg))
-	mux.Handle("POST /admin/reset", cfg.midlewareMetricsReset(metricsResetHandler()))
+	mux.Handle("POST /api/users", handlers.CreateUser(cfg))
+	mux.Handle("GET /admin/metrics", api.MetricsHandler(cfg))
+	mux.Handle("POST /admin/reset", cfg.MidlewareMetricsReset(handlers.ResetHandler(cfg)))
 
 	server := http.Server {
 		Handler: mux,
