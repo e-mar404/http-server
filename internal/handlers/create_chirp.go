@@ -11,7 +11,7 @@ type rawChirp struct {
 	Body string `json:"body"`
 }
 
-func ValidateChirp() http.Handler {
+func CreateChirp() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		chirp := rawChirp{}
 		decoder := json.NewDecoder(r.Body)
