@@ -1,35 +1,65 @@
 package handlers
 
 import (
+	"e-mar404/http-server/internal/api"
+	"e-mar404/http-server/internal/database"
 	"e-mar404/http-server/internal/respond"
 	"encoding/json"
 	"net/http"
 	"strings"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type rawChirp struct {
 	Body string `json:"body"`
+	UserID uuid.UUID `json:"user_id"`
 }
 
-func CreateChirp() http.Handler {
+type Chirp struct {
+	ID uuid.UUID `json:"id"`
+	UserID uuid.UUID `json:"user_id"`
+	Body string `json:"body"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func CreateChirp(cfg *api.Config) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		chirp := rawChirp{}
+		chirpRequest := rawChirp{}
 		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&chirp)	
+		err := decoder.Decode(&chirpRequest)	
 		if err != nil {
 			respond.Error(w, http.StatusInternalServerError, "Unable to decode chirp")
 			return 
 		}
 		
-		valid := len(chirp.Body) <= 140
+		valid := len(chirpRequest.Body) <= 140
 		if !valid  {
 			respond.Error(w, http.StatusBadRequest, "Chirp is too long")
 			return
 		}
 
-		respond.Success(w, r, http.StatusOK, respond.SuccessResponse {
-			CleanedBody: censor(chirp.Body),
-		})
+		arg := database.CreateChirpParams {
+			UserID: uuid.NullUUID{
+				UUID: chirpRequest.UserID,
+				Valid: true,		
+			},
+			Body: censor(chirpRequest.Body),
+		}
+		chirp, err := cfg.DB.CreateChirp(r.Context(), arg)
+		chirpResponse := Chirp {
+			ID: chirp.ID,
+			UserID: chirp.UserID.UUID,
+			Body: chirp.Body, 
+			CreatedAt: chirp.CreatedAt, 
+			UpdatedAt: chirp.UpdatedAt, 
+		}
+		if err != nil {
+			respond.Error(w, http.StatusInternalServerError, "Unable to create chirp")
+		}
+		respond.Success(w, r, http.StatusCreated, chirpResponse)
 	})
 }
 
