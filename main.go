@@ -34,6 +34,7 @@ func main() {
 	mux.Handle("GET /app/assets/", cfg.MiddlewareMetricsInc(handlers.Assets()))
 	mux.Handle("GET /api/healthz", handlers.Health())
 	mux.Handle("POST /api/chirps", handlers.CreateChirp(cfg))
+	mux.Handle("GET /api/chirps", handlers.GetChirps(cfg))
 	mux.Handle("POST /api/users", handlers.CreateUser(cfg))
 	mux.Handle("GET /admin/metrics", api.MetricsHandler(cfg))
 	mux.Handle("POST /admin/reset", cfg.MidlewareMetricsReset(handlers.ResetHandler(cfg)))

@@ -6,10 +6,6 @@ import (
 	"net/http"
 )
 
-type SuccessResponse struct {
-	CleanedBody string `json:"cleaned_body"`
-}
-
 func Success(w http.ResponseWriter, r *http.Request, code int, data any) {
 		res, err := json.Marshal(data)
 		if err != nil {

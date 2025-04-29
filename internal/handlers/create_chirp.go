@@ -3,11 +3,11 @@ package handlers
 import (
 	"e-mar404/http-server/internal/api"
 	"e-mar404/http-server/internal/database"
+	"e-mar404/http-server/internal/models"
 	"e-mar404/http-server/internal/respond"
 	"encoding/json"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -15,14 +15,6 @@ import (
 type rawChirp struct {
 	Body string `json:"body"`
 	UserID uuid.UUID `json:"user_id"`
-}
-
-type Chirp struct {
-	ID uuid.UUID `json:"id"`
-	UserID uuid.UUID `json:"user_id"`
-	Body string `json:"body"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func CreateChirp(cfg *api.Config) http.Handler {
@@ -49,7 +41,7 @@ func CreateChirp(cfg *api.Config) http.Handler {
 			Body: censor(chirpRequest.Body),
 		}
 		chirp, err := cfg.DB.CreateChirp(r.Context(), arg)
-		chirpResponse := Chirp {
+		chirpResponse := models.Chirp {
 			ID: chirp.ID,
 			UserID: chirp.UserID.UUID,
 			Body: chirp.Body, 
