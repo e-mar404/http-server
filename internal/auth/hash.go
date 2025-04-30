@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"unicode"
 
 	"golang.org/x/crypto/bcrypt"
@@ -17,29 +16,29 @@ func HashPassword(password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	
+
 	return string(hash), nil
 }
 
 func checkConstraints(password string) error {
-	hasNumber, hasSymbol, hasUppercase := false, false, false
+	hasNumber, hasSpecial, hasUppercase := false, false, false
 	if len(password) < 8 {
-		return errors.New("e-mar404/auth: password should be at least 8 characters long")
+		return InvalidPasswordLength 
 	}
-	for _, letter := range password {
+	for _, letter := range []rune(password) {
 		if unicode.IsNumber(letter) {
 			hasNumber = true
 		}
-		if unicode.IsSymbol(letter) {
-			hasSymbol = true
+		if unicode.IsSymbol(letter) || unicode.IsPunct(letter) {
+			hasSpecial = true
 		}
 		if unicode.IsUpper(letter) {
 			hasUppercase = true
 		}
 	}
 
-	if !hasNumber || !hasSymbol || !hasUppercase {
-		return errors.New("e-mar404/auth: passwrod should contain at least one number, symbol and capital case character")
+	if !hasNumber || !hasSpecial || !hasUppercase {
+		return InvalidPasswordComplexity 
 	}
 	
 	return nil

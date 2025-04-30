@@ -10,14 +10,15 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (id, email, created_at, updated_at)
+INSERT INTO users (id, email, hashed_password, created_at, updated_at)
 VALUES (
   gen_random_uuid(),
   $1,
+  "unset",
   NOW(),
   NOW() 
 )
-RETURNING id, email, created_at, updated_at
+RETURNING id, email, hashed_password, created_at, updated_at
 `
 
 func (q *Queries) CreateUser(ctx context.Context, email string) (User, error) {
@@ -26,6 +27,7 @@ func (q *Queries) CreateUser(ctx context.Context, email string) (User, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
+		&i.HashedPassword,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
