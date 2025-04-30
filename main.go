@@ -37,6 +37,7 @@ func main() {
 	mux.Handle("GET /api/chirps", handlers.GetChirps(cfg))
 	mux.Handle("GET /api/chirps/{chirpID}", handlers.GetChirpByID(cfg))
 	mux.Handle("POST /api/users", handlers.CreateUser(cfg))
+	mux.Handle("POST /api/login", handlers.Login(cfg))
 	mux.Handle("GET /admin/metrics", api.MetricsHandler(cfg))
 	mux.Handle("POST /admin/reset", cfg.MidlewareMetricsReset(handlers.ResetHandler(cfg)))
 
