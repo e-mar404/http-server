@@ -11,7 +11,7 @@ func ResetHandler(cfg *api.Config) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if cfg.Platform != "dev" {
 			respond.Error(w, http.StatusForbidden, "You can only reset in dev")
-			return 
+			return
 		}
 
 		err := cfg.DB.DeleteUsers(r.Context())

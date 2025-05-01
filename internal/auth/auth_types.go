@@ -7,7 +7,5 @@ func (e Error) Error() string {
 }
 
 const (
-	InvalidPasswordLength Error = "e-mar404/auth: password should be at least 8 characters long"
-	InvalidPasswordComplexity Error = "e-mar404/auth: password should contain at least one number, symbol and capital case character"
 	IncorrectPassword Error = "e-mar404/auth: Incorrect Password"
 )

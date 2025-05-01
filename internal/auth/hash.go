@@ -23,7 +23,7 @@ func HashPassword(password string) (string, error) {
 // func checkConstraints(password string) error {
 // 	hasNumber, hasSpecial, hasUppercase := false, false, false
 // 	if len(password) < 8 {
-// 		return InvalidPasswordLength 
+// 		return InvalidPasswordLength
 // 	}
 // 	for _, letter := range []rune(password) {
 // 		if unicode.IsNumber(letter) {
@@ -38,7 +38,7 @@ func HashPassword(password string) (string, error) {
 // 	}
 //
 // 	if !hasNumber || !hasSpecial || !hasUppercase {
-// 		return InvalidPasswordComplexity 
+// 		return InvalidPasswordComplexity
 // 	}
 //
 // 	return nil

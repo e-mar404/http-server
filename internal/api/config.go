@@ -7,7 +7,6 @@ import (
 
 type Config struct {
 	FileserverHits atomic.Int32
-	DB *database.Queries
-	Platform string
+	DB             *database.Queries
+	Platform       string
 }
-

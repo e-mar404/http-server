@@ -25,12 +25,12 @@ func GetChirpByID(cfg *api.Config) http.Handler {
 			return
 		}
 
-		chirpResponse := models.Chirp {
-			ID: chirp.ID,
-			UserID: chirp.UserID.UUID,
-			Body: chirp.Body, 
-			CreatedAt: chirp.CreatedAt, 
-			UpdatedAt: chirp.UpdatedAt, 
+		chirpResponse := models.Chirp{
+			ID:        chirp.ID,
+			UserID:    chirp.UserID.UUID,
+			Body:      chirp.Body,
+			CreatedAt: chirp.CreatedAt,
+			UpdatedAt: chirp.UpdatedAt,
 		}
 		respond.Success(w, r, http.StatusOK, chirpResponse)
 	})

@@ -16,15 +16,15 @@ func GetChirps(cfg *api.Config) http.Handler {
 			respond.Error(w, http.StatusInternalServerError, "Could not retrieve chirps")
 			return
 		}
-		
+
 		chirpsResponse := make(models.ChirpList, len(chirps))
 		for i, chirp := range chirps {
 			chirpsResponse[i] = models.Chirp{
-				ID: chirp.ID,
-				UserID: chirp.UserID.UUID,
-				Body: chirp.Body, 
-				CreatedAt: chirp.CreatedAt, 
-				UpdatedAt: chirp.UpdatedAt, 
+				ID:        chirp.ID,
+				UserID:    chirp.UserID.UUID,
+				Body:      chirp.Body,
+				CreatedAt: chirp.CreatedAt,
+				UpdatedAt: chirp.UpdatedAt,
 			}
 		}
 		respond.Success(w, r, http.StatusOK, chirpsResponse)

@@ -25,7 +25,7 @@ func main() {
 	dbQueries := database.New(db)
 
 	cfg := &api.Config{
-		DB: dbQueries,
+		DB:       dbQueries,
 		Platform: platform,
 	}
 	mux := http.NewServeMux()
@@ -41,9 +41,9 @@ func main() {
 	mux.Handle("GET /admin/metrics", api.MetricsHandler(cfg))
 	mux.Handle("POST /admin/reset", cfg.MidlewareMetricsReset(handlers.ResetHandler(cfg)))
 
-	server := http.Server {
+	server := http.Server{
 		Handler: mux,
-		Addr: ":8080",
+		Addr:    ":8080",
 	}
 
 	log.Printf("Starting server on http://localhost:8080/app\n")

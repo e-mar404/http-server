@@ -11,27 +11,26 @@ import (
 	"net/http"
 )
 
-
 func CreateUser(cfg *api.Config) http.Handler {
-	return http.HandlerFunc (
+	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			params := struct {
-				Email string `json:"email"`
+				Email    string `json:"email"`
 				Password string `json:"password"`
 			}{}
 			decoder := json.NewDecoder(r.Body)
 			err := decoder.Decode(&params)
 			if err != nil {
 				respond.Error(w, http.StatusInternalServerError, "error reading response body")
-				return 
+				return
 			}
 			hash, err := auth.HashPassword(params.Password)
 			if err != nil {
 				respond.Error(w, http.StatusInternalServerError, err.Error())
 				return
 			}
-			arg := database.CreateUserParams {
-				Email: params.Email,
+			arg := database.CreateUserParams{
+				Email:          params.Email,
 				HashedPassword: hash,
 			}
 			user, err := cfg.DB.CreateUser(r.Context(), arg)
@@ -39,9 +38,9 @@ func CreateUser(cfg *api.Config) http.Handler {
 				respond.Error(w, http.StatusInternalServerError, fmt.Sprintf("error creating user: %v\n", err))
 				return
 			}
-			userResponse := models.User {
-				ID: user.ID,
-				Email: user.Email,
+			userResponse := models.User{
+				ID:        user.ID,
+				Email:     user.Email,
 				CreatedAt: user.CreatedAt,
 				UpdatedAt: user.UpdatedAt,
 			}

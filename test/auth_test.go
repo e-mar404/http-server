@@ -8,27 +8,17 @@ import (
 func TestHashPassword(t *testing.T) {
 	tt := []struct {
 		password string
-		attempt string
+		attempt  string
 		expected error
 	}{
 		{
-			password : "hello",
-			attempt: "",
-			expected: auth.InvalidPasswordLength,
-		},
-		{
-			password: "thisislongenough",
-			attempt: "",
-			expected: auth.InvalidPasswordComplexity,
-		},
-		{
-			password: "Th!sW0rks",
-			attempt: "Th!sDoesNotW0rks",
+			password: "password",
+			attempt:  "notpassword",
 			expected: auth.IncorrectPassword,
 		},
 		{
-			password: "Th!sW0rks",
-			attempt: "Th!sW0rks",
+			password: "password",
+			attempt:  "password",
 			expected: nil,
 		},
 	}
