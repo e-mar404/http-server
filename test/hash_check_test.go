@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestHashPassword(t *testing.T) {
+func TestHashAndCheckPassword(t *testing.T) {
 	tt := []struct {
 		password string
 		attempt  string

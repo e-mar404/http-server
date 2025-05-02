@@ -8,14 +8,16 @@ import (
 )
 
 func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (string, error) {
+	currentTime := time.Now()
 	claims := jwt.RegisteredClaims{
 		Issuer:    "chirpy",
 		Subject:   userID.String(),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiresIn)),
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		ExpiresAt: jwt.NewNumericDate(currentTime.Add(expiresIn)),
+		IssuedAt:  jwt.NewNumericDate(currentTime),
 	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenStr, err := token.SignedString(tokenSecret)
+	tokenStr, err := token.SignedString([]byte(tokenSecret))
 	if err != nil {
 		return "", err
 	}
@@ -25,10 +27,10 @@ func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (str
 
 func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 	token, err := jwt.ParseWithClaims(
-		tokenSecret,
-		jwt.RegisteredClaims{},
+		tokenString,
+		&jwt.RegisteredClaims{},
 		func(t *jwt.Token) (any, error) {
-			return []byte("AllYourBase"), nil
+			return []byte(tokenSecret), nil
 		})
 	if err != nil {
 		return uuid.UUID{}, err
