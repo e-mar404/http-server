@@ -18,6 +18,7 @@ func main() {
 	godotenv.Load()
 	dbURL := os.Getenv("DB_URL")
 	platform := os.Getenv("PLATFORM")
+	secret := os.Getenv("SECRET")
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatalf("Error while connecting to database: %v\n", err)
@@ -27,6 +28,7 @@ func main() {
 	cfg := &api.Config{
 		DB:       dbQueries,
 		Platform: platform,
+		Secret: secret,
 	}
 	mux := http.NewServeMux()
 
